@@ -25,7 +25,7 @@
 
       <div class="login-error-toast" id="login-error"></div>
 
-      <form class="login-form" id="login-form" autocomplete="on">
+      <form class="login-form" id="login-form" autocomplete="on" onsubmit="event.preventDefault(); window.fairShiftApp.doLogin();">
         <div class="input-group">
           <label class="input-label" for="login-worksite-select">Authorized Worksite Location</label>
           <div class="input-wrapper">
@@ -115,7 +115,7 @@
           <a href="#" class="forgot-link" onclick="event.preventDefault(); alert('Demo Security PIN is 1234.');">Help with PIN</a>
         </div>
 
-        <button type="submit" class="btn-login-submit" id="btn-login-submit">
+        <button type="button" class="btn-login-submit" id="btn-login-submit" onclick="window.fairShiftApp.doLogin();">
           <span>Enter Portal</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -129,19 +129,19 @@
       </div>
 
       <div class="demo-account-group">
-        <button type="button" class="demo-chip" data-demo="rajesh">
+        <button type="button" class="demo-chip" data-demo="rajesh" onclick="window.fairShiftApp.loginDemo('rajesh');">
           <span>Rajesh Kumar</span>
           <span class="demo-chip-role">Concrete Mason • Worker</span>
         </button>
-        <button type="button" class="demo-chip" data-demo="vikram">
+        <button type="button" class="demo-chip" data-demo="vikram" onclick="window.fairShiftApp.loginDemo('vikram');">
           <span>Vikram Rathore</span>
           <span class="demo-chip-role">Safety Lead • Supervisor</span>
         </button>
-        <button type="button" class="demo-chip" data-demo="priya">
+        <button type="button" class="demo-chip" data-demo="priya" onclick="window.fairShiftApp.loginDemo('priya');">
           <span>Dr. Priya Nair</span>
           <span class="demo-chip-role">Chief of Clinical Ops • Healthcare</span>
         </button>
-        <button type="button" class="demo-chip" data-demo="marcus">
+        <button type="button" class="demo-chip" data-demo="marcus" onclick="window.fairShiftApp.loginDemo('marcus');">
           <span>Marcus Vance</span>
           <span class="demo-chip-role">Plant Operations Lead • Factory</span>
         </button>
