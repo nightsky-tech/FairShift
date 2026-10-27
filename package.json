@@ -1,0 +1,28 @@
+{
+  "name": "fairshift-sdg8",
+  "version": "1.0.0",
+  "description": "FairShift - Fair, Safe & Transparent Workforce Management Platform for SDG 8 (Decent Work & Economic Growth)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/unit.test.js"
+  },
+  "keywords": [
+    "fairshift",
+    "sdg8",
+    "workforce-transparency",
+    "worker-safety",
+    "overtime-audit",
+    "skill-passport",
+    "multilingual",
+    "cloud-run"
+  ],
+  "author": "FairShift Team",
+  "license": "MIT",
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

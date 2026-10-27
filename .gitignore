@@ -1,0 +1,23 @@
+# Node & Runtime
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# System & OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+
+# Environment & IDE
+.env
+.env.local
+.vscode/
+.idea/
+
+# Coverage & testing
+coverage/
+*.lcov
