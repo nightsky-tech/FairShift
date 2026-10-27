@@ -138,6 +138,43 @@ const INDUSTRY_PRESETS = {
   }
 };
 
+// Add Site Managers & Worksite Codes to each preset
+INDUSTRY_PRESETS.construction.manager = {
+  name: 'Vikram Rathore',
+  title: 'Safety Lead & Senior Foreman',
+  badgeId: 'MGR-BLR-104',
+  avatar: '👷‍♂️'
+};
+INDUSTRY_PRESETS.construction.worksiteCode = 'SITE-METRO-04';
+
+INDUSTRY_PRESETS.healthcare.manager = {
+  name: 'Dr. Priya Nair',
+  title: 'Chief of Clinical Operations',
+  badgeId: 'MGR-MED-802',
+  avatar: '👩‍⚕️'
+};
+INDUSTRY_PRESETS.healthcare.worksiteCode = 'SITE-APEX-HOSP';
+
+INDUSTRY_PRESETS.manufacturing.manager = {
+  name: 'Marcus Vance',
+  title: 'Plant Operations Director',
+  badgeId: 'MGR-MFG-330',
+  avatar: '👨‍🔧'
+};
+INDUSTRY_PRESETS.manufacturing.worksiteCode = 'SITE-AUTO-P3';
+
+INDUSTRY_PRESETS.education.manager = {
+  name: 'Prof. S. Ranganathan',
+  title: 'Campus Facilities & Safety Director',
+  badgeId: 'MGR-SRM-501',
+  avatar: '👨‍🏫'
+};
+INDUSTRY_PRESETS.education.worksiteCode = 'SITE-SRM-CAMPUS';
+
+const globalScope = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScope.INDUSTRY_PRESETS = INDUSTRY_PRESETS;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { INDUSTRY_PRESETS };
 }
+

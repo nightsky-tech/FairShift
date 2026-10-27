@@ -4,8 +4,8 @@
    Optimized for high-contrast outdoor visibility and rapid command response
    ========================================================================== */
 
+/* Base Theme (Dark - Default) */
 :root {
-  /* Color Palette */
   --bg-dark: #0A0E17;
   --bg-surface: #111827;
   --bg-card: rgba(17, 24, 39, 0.78);
@@ -48,6 +48,79 @@
   --radius-full: 9999px;
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light Theme Variables */
+body.light-theme {
+  --bg-dark: #F1F5F9;
+  --bg-surface: #FFFFFF;
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-card-hover: rgba(248, 250, 252, 0.95);
+  --bg-glass-input: rgba(241, 245, 249, 0.9);
+
+  --border-subtle: rgba(15, 23, 42, 0.09);
+  --border-glass: rgba(15, 23, 42, 0.18);
+  --border-focus: #0284C7;
+
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --text-inverse: #F8FAFC;
+
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 14px 0 rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.12);
+}
+
+body.light-theme {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+}
+
+body.light-theme .app-header {
+  background: rgba(255, 255, 255, 0.88);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .logo-title {
+  background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .sim-toolbar {
+  background: rgba(241, 245, 249, 0.85);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+}
+
+body.light-theme .sim-btn {
+  background: rgba(15, 23, 42, 0.04);
+  color: var(--text-secondary);
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+body.light-theme .sim-btn:hover {
+  background: rgba(15, 23, 42, 0.08);
+  color: var(--text-primary);
+}
+
+body.light-theme .sim-btn.active {
+  background: rgba(14, 165, 233, 0.15);
+  color: #0284C7;
+  border-color: #0284C7;
+}
+
+body.light-theme .modal-dialog {
+  background: #FFFFFF;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+body.light-theme .meter-bar-track {
+  background: rgba(15, 23, 42, 0.08);
 }
 
 /* Base Styles */
@@ -1362,3 +1435,351 @@ body {
     min-width: 100%;
   }
 }
+
+/* ==========================================================================
+   LOGIN & WORKSITE SELECTION PORTAL
+   ========================================================================== */
+
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--bg-dark);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.login-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 900px;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem;
+  animation: zoom-in 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes zoom-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.login-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  filter: drop-shadow(0 0 16px rgba(14, 165, 233, 0.6));
+}
+
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Worksite Selection Grid */
+.worksite-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.worksite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.worksite-card {
+  background: var(--bg-glass-input);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.worksite-card:hover {
+  border-color: var(--border-glass);
+  transform: translateY(-2px);
+  background: var(--bg-card-hover);
+}
+
+.worksite-card.active {
+  border-color: var(--accent-cyan);
+  background: rgba(14, 165, 233, 0.12);
+  box-shadow: 0 0 16px var(--accent-cyan-glow);
+}
+
+.worksite-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.worksite-icon {
+  font-size: 1.8rem;
+}
+
+.worksite-code-tag {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.worksite-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.2rem;
+}
+
+.worksite-loc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.manager-badge-pill {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+body.light-theme .manager-badge-pill {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.manager-avatar {
+  font-size: 1.25rem;
+}
+
+.manager-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.manager-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.manager-role {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Persona Login Tabs */
+.login-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg-glass-input);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.login-tab-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.login-tab-btn.active {
+  background: var(--accent-cyan);
+  color: #FFFFFF;
+  box-shadow: 0 0 14px var(--accent-cyan-glow);
+}
+
+/* Login Action Button */
+.btn-enter-portal {
+  width: 100%;
+  min-height: 54px;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.btn-enter-portal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.btn-enter-portal:active {
+  transform: scale(0.98);
+}
+
+/* Quick 1-Click Demo Logins Bar */
+.quick-login-bar {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.quick-login-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.quick-btn-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+body.light-theme .quick-btn {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.quick-btn:hover {
+  background: var(--accent-cyan);
+  color: #FFFFFF;
+  border-color: var(--accent-cyan);
+}
+
+/* User Profile Badge in Header */
+.user-badge-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-glass-input);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.user-badge-avatar {
+  font-size: 1.1rem;
+}
+
+/* Logout / Switch Site Button */
+.btn-switch-site {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #F87171;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-switch-site:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  background: var(--bg-glass-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--border-focus);
+  transform: rotate(15deg);
+}
+

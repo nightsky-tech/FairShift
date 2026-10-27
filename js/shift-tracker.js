@@ -170,6 +170,16 @@ class ShiftTracker {
     }
   }
 
+  // Advance seconds helper for live ticking without double intervals
+  advanceSeconds(seconds = 1) {
+    this.state.simulatedElapsedSeconds += seconds;
+    this.updateStrainMetrics();
+    this.saveState();
+    const summary = this.getShiftSummary();
+    this.onUpdate(summary);
+    return summary;
+  }
+
   // Fast-Forward helper for hackathon judges to simulate overtime without waiting 8 hours
   advanceHours(hours) {
     this.state.simulatedElapsedSeconds += Math.round(hours * 3600);
@@ -327,6 +337,10 @@ class ShiftTracker {
   }
 }
 
+const globalScopeShift = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeShift.ShiftTracker = ShiftTracker;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { ShiftTracker };
 }
+

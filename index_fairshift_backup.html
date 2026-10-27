@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="FairShift - Frontline Workforce Transparency & Safety Platform for UN SDG 8 (Decent Work & Economic Growth). Features geofenced clock-in, live overtime odometers, abuse-proof hazard reporting, and predictive attrition radar.">
+  <meta name="theme-color" content="#0A0E17">
+  <title>FairShift | Decent Work & Shift Transparency Platform (SDG 8)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header" id="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-icon">🛡️</span>
+        <div>
+          <span class="logo-title">FairShift</span>
+          <span class="sdg-badge">UN SDG 8</span>
+        </div>
+      </div>
+
+      <!-- Mode & Global Controls -->
+      <div class="header-actions">
+        <!-- Persona Switcher -->
+        <div class="persona-switcher" id="persona-switcher" role="radiogroup" aria-label="Interface Persona">
+          <button class="persona-btn active" id="btn-mode-worker" data-mode="worker" aria-checked="true" role="radio">
+            <span>👷</span> <span id="txt-nav-worker">Worker Mode</span>
+          </button>
+          <button class="persona-btn" id="btn-mode-supervisor" data-mode="supervisor" aria-checked="false" role="radio">
+            <span>🏢</span> <span id="txt-nav-supervisor">Supervisor Desk</span>
+          </button>
+        </div>
+
+        <!-- Industry Selector -->
+        <div class="select-wrapper">
+          <select id="industry-select" aria-label="Select Target Industry">
+            <option value="construction">🏗️ Metro Line 4 (Construction)</option>
+            <option value="healthcare">🏥 Apex City Hospital (Healthcare)</option>
+            <option value="manufacturing">🏭 Precision Auto (Factory)</option>
+            <option value="education">🎓 SRM Campus (Education)</option>
+          </select>
+        </div>
+
+        <!-- 6-Language Switcher -->
+        <div class="select-wrapper">
+          <select id="lang-select" aria-label="Select Language">
+            <option value="en">English (EN)</option>
+            <option value="hi">हिंदी (HI)</option>
+            <option value="ta">தமிழ் (TA)</option>
+            <option value="te">తెలుగు (TE)</option>
+            <option value="bn">বাংলা (BN)</option>
+            <option value="es">Español (ES)</option>
+          </select>
+        </div>
+
+        <!-- User Profile Badge & Worksite Indicator -->
+        <div class="user-badge-header" id="user-badge-header" title="Current Authenticated Profile">
+          <span class="user-badge-avatar" id="user-badge-avatar">👷‍♂️</span>
+          <span id="user-badge-text">Rajesh Kumar (Worker)</span>
+        </div>
+
+        <!-- Theme Toggle (Light / Dark Mode) -->
+        <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+          ☀️
+        </button>
+
+        <!-- Switch Site / Logout Button -->
+        <button class="btn-switch-site" id="btn-switch-site" title="Switch Worksite Location or Persona">
+          <span>🚪</span> <span id="txt-btn-switch-site">Switch Site</span>
+        </button>
+
+        <!-- Store-and-Forward Offline Status Pill -->
+        <div class="status-pill online" id="offline-pill" title="Click to view offline queue log">
+          <span class="status-dot"></span>
+          <span id="offline-pill-text">Cloud Synced</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       AUTHENTICATION & WORKSITE SELECTION PORTAL (LOGIN SCREEN)
+       ==================================================================== -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-container">
+      <div class="login-hero">
+        <span class="login-logo">🛡️</span>
+        <h1 class="login-title">FairShift Workforce Portal</h1>
+        <p class="login-subtitle">
+          UN SDG 8 (Decent Work & Economic Growth) • Select your authorized worksite location and sign in as a Frontline Worker or Site Operations Manager.
+        </p>
+      </div>
+
+      <!-- Worksite Selection -->
+      <div class="worksite-section-title">
+        <span>📍 1. Select Authorized Worksite Location:</span>
+      </div>
+      <div class="worksite-grid" id="login-worksite-grid">
+        <!-- Card 1: Construction -->
+        <div class="worksite-card active" data-site="construction">
+          <div>
+            <div class="worksite-header-row">
+              <span class="worksite-icon">🏗️</span>
+              <span class="worksite-code-tag">SITE-METRO-04</span>
+            </div>
+            <div class="worksite-name">Metro Line 4 (Rail Project)</div>
+            <div class="worksite-loc">South Sector Site B, Pillar 104-128</div>
+          </div>
+          <div class="manager-badge-pill">
+            <span class="manager-avatar">👷‍♂️</span>
+            <div class="manager-details">
+              <span class="manager-name">Vikram Rathore</span>
+              <span class="manager-role">Safety Lead & Foreman (#MGR-BLR-104)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Healthcare -->
+        <div class="worksite-card" data-site="healthcare">
+          <div>
+            <div class="worksite-header-row">
+              <span class="worksite-icon">🏥</span>
+              <span class="worksite-code-tag">SITE-APEX-HOSP</span>
+            </div>
+            <div class="worksite-name">Apex City Multi-Specialty Hospital</div>
+            <div class="worksite-loc">Central Trauma & ICU Ward Block</div>
+          </div>
+          <div class="manager-badge-pill">
+            <span class="manager-avatar">👩‍⚕️</span>
+            <div class="manager-details">
+              <span class="manager-name">Dr. Priya Nair</span>
+              <span class="manager-role">Chief of Clinical Operations (#MGR-MED-802)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Manufacturing -->
+        <div class="worksite-card" data-site="manufacturing">
+          <div>
+            <div class="worksite-header-row">
+              <span class="worksite-icon">🏭</span>
+              <span class="worksite-code-tag">SITE-AUTO-P3</span>
+            </div>
+            <div class="worksite-name">Precision Auto Works (Plant 3)</div>
+            <div class="worksite-loc">Chassis Assembly & Welding Bays</div>
+          </div>
+          <div class="manager-badge-pill">
+            <span class="manager-avatar">👨‍🔧</span>
+            <div class="manager-details">
+              <span class="manager-name">Marcus Vance</span>
+              <span class="manager-role">Plant Operations Director (#MGR-MFG-330)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Education -->
+        <div class="worksite-card" data-site="education">
+          <div>
+            <div class="worksite-header-row">
+              <span class="worksite-icon">🎓</span>
+              <span class="worksite-code-tag">SITE-SRM-CAMPUS</span>
+            </div>
+            <div class="worksite-name">SRM Campus & Tech Park</div>
+            <div class="worksite-loc">Science Labs & Facilities Block</div>
+          </div>
+          <div class="manager-badge-pill">
+            <span class="manager-avatar">👨‍🏫</span>
+            <div class="manager-details">
+              <span class="manager-name">Prof. S. Ranganathan</span>
+              <span class="manager-role">Campus Facilities Director (#MGR-SRM-501)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Persona Tabs -->
+      <div class="worksite-section-title">
+        <span>👤 2. Choose Login Role & Security Credential:</span>
+      </div>
+      <div class="login-tabs">
+        <button class="login-tab-btn active" id="tab-login-worker" data-role="worker">
+          <span>👷</span> <span>Frontline Worker Portal</span>
+        </button>
+        <button class="login-tab-btn" id="tab-login-manager" data-role="supervisor">
+          <span>🏢</span> <span>Site Operations Manager Desk</span>
+        </button>
+      </div>
+
+      <!-- Worker Login Info -->
+      <div id="login-worker-fields" style="margin-bottom: 1.5rem;">
+        <div class="form-group">
+          <label class="form-label" for="login-worker-select">Select Frontline Worker Profile:</label>
+          <select class="form-select" id="login-worker-select">
+            <option value="Rajesh Kumar|Concrete Mason">Rajesh Kumar (ID: FS-W104 • Concrete Mason)</option>
+            <option value="Suresh Murugan|Scaffold Rigger">Suresh Murugan (ID: FS-W209 • Scaffold Rigger)</option>
+            <option value="Amit Sharma|Site Electrician">Amit Sharma (ID: FS-W311 • Site Electrician)</option>
+            <option value="David Chen|Crane Operator">David Chen (ID: FS-W405 • Tower Crane Operator)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Manager Login Info -->
+      <div id="login-manager-fields" style="display: none; margin-bottom: 1.5rem;">
+        <div style="padding: 0.85rem; background: rgba(14, 165, 233, 0.12); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem;">
+          <div style="font-weight: 700; color: #38BDF8;" id="login-mgr-preview-name">Site Manager: Vikram Rathore</div>
+          <div style="color: var(--text-secondary); font-size: 0.78rem;" id="login-mgr-preview-role">Authorized Access: Live Site Attendance, Attrition Radar & Hazard SLA Triage</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-manager-pin">Manager Security PIN (Demo: 1234):</label>
+          <input type="password" class="form-input" id="login-manager-pin" value="1234" placeholder="Enter 4-digit PIN">
+        </div>
+      </div>
+
+      <!-- Submit Action -->
+      <button class="btn-enter-portal" id="btn-enter-portal">
+        <span id="btn-enter-icon">🚀</span>
+        <span id="btn-enter-text">Enter Worksite Portal</span>
+      </button>
+
+      <!-- Quick 1-Click Demo Logins -->
+      <div class="quick-login-bar">
+        <span class="quick-login-label">⚡ 1-Click Demo Launcher:</span>
+        <div class="quick-btn-group">
+          <button class="quick-btn" data-demo="construction-worker">🏗️ Metro Worker</button>
+          <button class="quick-btn" data-demo="construction-manager">🏢 Metro Manager</button>
+          <button class="quick-btn" data-demo="healthcare-worker">🏥 Hospital Nurse</button>
+          <button class="quick-btn" data-demo="manufacturing-manager">🏭 Factory Lead</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Judge Simulation & Testing Bar -->
+  <section class="sim-toolbar" aria-label="Demo Testing Controls">
+    <div class="sim-container">
+      <div class="sim-label">
+        <span>⚡ Demo Lab:</span>
+      </div>
+      <div class="sim-buttons">
+        <!-- Geofence Toggle -->
+        <button class="sim-btn active" id="sim-geo-toggle" title="Toggle worker GPS position between on-site and 1.5km away">
+          📍 Site: Inside Zone
+        </button>
+        <!-- Climate Heat Stress Toggle -->
+        <button class="sim-btn" id="sim-heat-toggle" title="Toggle between normal 28°C and dangerous 42°C wet-bulb heatwave">
+          ☀️ Temp: 28°C Normal
+        </button>
+        <!-- Offline Reception Toggle -->
+        <button class="sim-btn" id="sim-net-toggle" title="Simulate cell-dead basement or tunnel">
+          📶 Reception: Online 5G
+        </button>
+        <!-- Shift Fast-Forward Buttons -->
+        <button class="sim-btn" id="sim-ff-1h" title="Fast-forward current shift by 1 hour">
+          ⏩ +1h
+        </button>
+        <button class="sim-btn" id="sim-ff-4h" title="Fast-forward current shift by 4 hours">
+          ⏩ +4h
+        </button>
+        <button class="sim-btn" id="sim-ff-ot" title="Fast-forward to 8.5 hours to trigger 1.5x Overtime calculation">
+          🔥 Trigger 8.5h OT
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- Heat-Stress Warning Banner (Dynamic) -->
+    <div class="heat-alert-banner hidden" id="heat-alert-banner">
+      <div class="heat-alert-info">
+        <span class="heat-alert-icon">🔥</span>
+        <div>
+          <div class="heat-alert-title" id="heat-banner-title">CRITICAL HEAT-STRESS ALERT (Wet-Bulb > 35°C)</div>
+          <div class="heat-alert-desc" id="heat-banner-desc">Mandatory 15-minute hydration rest enforced. Physiological strain multiplier scaled to 1.4x.</div>
+        </div>
+      </div>
+      <button class="voice-btn-mini" id="btn-voice-heat-alert">
+        <span>🔊</span> <span id="txt-voice-heat">Listen to Voice Alert</span>
+      </button>
+    </div>
+
+    <!-- ====================================================================
+         1. WORKER INTERFACE VIEW
+         ==================================================================== -->
+    <div class="worker-view" id="worker-view">
+      <div class="worker-grid">
+
+        <!-- Geofenced Clock-in & Role Card -->
+        <div class="glass-panel geofence-card" id="card-geofence">
+          <div class="site-badge-row">
+            <span class="site-name">
+              <span id="industry-icon">🏗️</span>
+              <span id="site-display-name">Metro Line 4 - South Sector</span>
+            </span>
+            <span class="geo-status-tag verified" id="geo-status-badge">● Inside GPS Geofence (250m)</span>
+          </div>
+
+          <div class="role-select-box">
+            <label for="worker-role-select" id="txt-lbl-role">Select Assigned Role & Task:</label>
+            <select id="worker-role-select"></select>
+          </div>
+
+          <button class="clock-btn-master btn-in" id="btn-clock-master">
+            <span id="clock-master-icon">⚡</span>
+            <span id="clock-master-text">1-TAP CLOCK IN</span>
+          </button>
+        </div>
+
+        <!-- Live Shift Odometer & Real-Time Pay -->
+        <div class="glass-panel odometer-card" id="card-odometer">
+          <div class="timer-hero">
+            <div class="timer-sublabel" id="txt-lbl-shift-dur">Active Shift Duration</div>
+            <div class="timer-display num-mono" id="shift-clock-timer">00:00:00</div>
+            <span class="overtime-pill hidden" id="overtime-indicator">⚠️ 1.5× OVERTIME ACTIVE</span>
+          </div>
+
+          <div class="pay-grid">
+            <div class="pay-item">
+              <div class="pay-item-label" id="txt-lbl-std-pay">Standard Hours Pay</div>
+              <div class="pay-item-val num-mono" id="pay-standard-val">₹0.00</div>
+            </div>
+            <div class="pay-item">
+              <div class="pay-item-label" id="txt-lbl-ot-pay">1.5× Overtime Bonus</div>
+              <div class="pay-item-val num-mono" id="pay-overtime-val">₹0.00</div>
+            </div>
+            <div class="pay-item">
+              <div class="pay-item-label" id="txt-lbl-hazard-pay">Role Hazard Allowance</div>
+              <div class="pay-item-val num-mono" id="pay-hazard-val">₹0.00</div>
+            </div>
+            <div class="pay-item">
+              <div class="pay-item-label" id="txt-lbl-deductions">Welfare / Deductions</div>
+              <div class="pay-item-val num-mono" id="pay-deductions-val">-₹0.00</div>
+            </div>
+            <div class="pay-item net-pay">
+              <div class="pay-item-label" id="txt-lbl-net-pay">Est. Net Take-Home Payout</div>
+              <div class="pay-item-val num-mono" id="pay-net-val">₹0.00</div>
+            </div>
+          </div>
+
+          <button class="audio-read-btn" id="btn-read-payslip">
+            <span>🔊</span> <span id="txt-btn-read-payslip">Read Payslip Aloud in Hindi / Regional Language</span>
+          </button>
+        </div>
+
+        <!-- Metabolic Strain & Battery Check Card -->
+        <div class="glass-panel battery-card" id="card-battery">
+          <div class="strain-meter-box">
+            <div class="meter-header">
+              <span class="meter-title" id="txt-lbl-strain">MET Physiological Strain Index</span>
+              <span class="meter-score low num-mono" id="strain-score-num">0 / 100</span>
+            </div>
+            <div class="meter-bar-track">
+              <div class="meter-bar-fill" id="strain-bar-fill" style="width: 0%; background: #10B981;"></div>
+            </div>
+          </div>
+
+          <label class="form-label" id="txt-lbl-battery">3-Second End-of-Shift Energy Battery Check:</label>
+          <div class="battery-selector" id="battery-selector">
+            <button class="battery-btn active" data-battery="green">
+              <span>🟢</span>
+              <span id="txt-bat-green">Energized</span>
+            </button>
+            <button class="battery-btn" data-battery="yellow">
+              <span>🟡</span>
+              <span id="txt-bat-yellow">Tired</span>
+            </button>
+            <button class="battery-btn" data-battery="red">
+              <span>🔴</span>
+              <span id="txt-bat-red">Exhausted</span>
+            </button>
+          </div>
+
+          <label class="form-label" id="txt-lbl-quickbreak">1-Tap Fast Break Logger:</label>
+          <div class="break-buttons">
+            <button class="break-btn" id="btn-break-water">💧 5m Hydration</button>
+            <button class="break-btn" id="btn-break-lunch">🍱 30m Meal</button>
+            <button class="break-btn" id="btn-break-rest">☕ 15m Rest</button>
+          </div>
+        </div>
+
+        <!-- Quick Frontline Actions -->
+        <div class="action-strip">
+          <button class="action-tile-btn" id="btn-open-hazard-modal">
+            <span class="action-tile-icon">⚠️</span>
+            <div>
+              <div class="action-tile-title" id="txt-act-hazard">Report Safety Hazard</div>
+              <div class="action-tile-desc" id="txt-act-hazard-sub">Abuse-proof, photo/voice ready</div>
+            </div>
+          </button>
+
+          <button class="action-tile-btn" id="btn-open-passport-modal">
+            <span class="action-tile-icon">🪪</span>
+            <div>
+              <div class="action-tile-title" id="txt-act-passport">Digital Skill Passport</div>
+              <div class="action-tile-desc" id="txt-act-passport-sub">Verified hours & QR verification</div>
+            </div>
+          </button>
+
+          <button class="action-tile-btn" id="btn-open-feedback-modal">
+            <span class="action-tile-icon">🔒</span>
+            <div>
+              <div class="action-tile-title" id="txt-act-feedback">100% Anonymous Feedback</div>
+              <div class="action-tile-desc" id="txt-act-feedback-sub">Protected by cryptographic blind token</div>
+            </div>
+          </button>
+        </div>
+
+        <!-- Peer Hazard Consensus Desk -->
+        <div class="glass-panel hazard-feed-card" id="card-hazard-feed">
+          <div class="feed-header">
+            <span class="feed-title">
+              <span>⚠️</span>
+              <span id="txt-sec-hazard-feed">Active Frontline Hazards & Peer Consensus</span>
+            </span>
+            <span class="status-pill online">
+              <span class="status-dot"></span>
+              <span id="hazard-count-badge">3 Hazards Tracked</span>
+            </span>
+          </div>
+
+          <div class="hazard-list" id="hazard-items-container">
+            <!-- Dynamically populated from safety.js -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         2. SUPERVISOR COMMAND CENTER VIEW
+         ==================================================================== -->
+    <div class="supervisor-view hidden" id="supervisor-view">
+
+      <!-- Executive Metric Ribbon -->
+      <div class="metric-ribbon">
+        <div class="glass-panel metric-card">
+          <div class="metric-label" id="txt-sup-headcount">Live Frontline Headcount</div>
+          <div class="metric-value num-mono" id="sup-stat-headcount">18</div>
+          <div class="metric-trend good">● 100% Inside Geofence</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div class="metric-label" id="txt-sup-ot-risk">Overtime Shifts Flagged (>8h)</div>
+          <div class="metric-value num-mono" id="sup-stat-ot">3</div>
+          <div class="metric-trend warning">● Requires Rest Scheduling</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div class="metric-label" id="txt-sup-sla-hazards">Critical Hazards Under SLA</div>
+          <div class="metric-value num-mono" id="sup-stat-hazards">2</div>
+          <div class="metric-trend danger">● 1 Escalation Imminent</div>
+        </div>
+
+        <div class="glass-panel metric-card">
+          <div class="metric-label" id="txt-sup-avg-strain">Site Metabolic Strain Index</div>
+          <div class="metric-value num-mono" id="sup-stat-strain">54 / 100</div>
+          <div class="metric-trend warning">● Elevated during afternoon heat</div>
+        </div>
+      </div>
+
+      <!-- Supervisor Split Details -->
+      <div class="supervisor-grid">
+
+        <!-- AI Attrition & Burnout Radar -->
+        <div class="glass-panel attrition-card">
+          <div class="feed-header">
+            <span class="feed-title">
+              <span>🧠</span>
+              <span id="txt-sup-attrition-title">AI Attrition & Burnout Radar</span>
+            </span>
+            <span class="geo-status-tag away" id="attrition-badge">High Risk</span>
+          </div>
+
+          <div class="risk-meter-container">
+            <div>
+              <div style="font-weight: 700; font-size: 1.05rem;" id="worker-profile-name">Worker #4092 (Mason Lead)</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);" id="worker-profile-sub">5 Overtime shifts in last 7 days + 2 night rotations</div>
+            </div>
+            <div class="risk-circle" id="risk-circle">
+              <span class="risk-pct num-mono" id="risk-pct-num">84%</span>
+              <span class="risk-text" id="risk-text-label">Quit Risk</span>
+            </div>
+          </div>
+
+          <label class="form-label">Explainable Risk Factors Detected:</label>
+          <div class="risk-factors-list" id="risk-factors-list">
+            <div class="factor-item">
+              <span class="factor-bullet">⚠️</span>
+              <span>Consecutive 10h+ shifts exceed maximum safe labor regulations</span>
+            </div>
+            <div class="factor-item">
+              <span class="factor-bullet">⚠️</span>
+              <span>Frequent circadian disruption (night shift to day shift turnaround &lt; 11h)</span>
+            </div>
+            <div class="factor-item">
+              <span class="factor-bullet">⚠️</span>
+              <span>Assigned in proximity to 2 uninspected high-voltage alerts</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="font-size: 0.8rem; font-weight: 700; color: #34D399;">💡 Proactive Retention Recommendation:</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem;">Grant mandatory 24h rest rotation and temporarily reassign to ground inspection role.</div>
+          </div>
+        </div>
+
+        <!-- Priority Safety SLA Triage Desk -->
+        <div class="glass-panel triage-table-card">
+          <div class="feed-header">
+            <span class="feed-title">
+              <span>📋</span>
+              <span id="txt-sup-triage-title">Safety Incident Triage Desk</span>
+            </span>
+          </div>
+
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Hazard Category</th>
+                  <th>Location</th>
+                  <th>SLA Left</th>
+                  <th>Co-Signs</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="sup-triage-tbody">
+                <!-- Dynamically populated from safety.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Anonymous Morale & Pulse Ledger -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <div class="feed-header">
+            <span class="feed-title">
+              <span>📊</span>
+              <span id="txt-sup-morale-title">Anonymous Workforce Morale Pulse</span>
+            </span>
+            <span class="status-pill online">Blind-Token Verified</span>
+          </div>
+
+          <div class="sentiment-bars">
+            <div class="sentiment-row">
+              <div class="sentiment-label-row">
+                <span>Management Respect & Fair Treatment</span>
+                <span class="num-mono" id="sup-morale-respect">4.2 / 5.0</span>
+              </div>
+              <div class="meter-bar-track">
+                <div class="meter-bar-fill" style="width: 84%; background: #10B981;"></div>
+              </div>
+            </div>
+
+            <div class="sentiment-row">
+              <div class="sentiment-label-row">
+                <span>Rest & Hydration Facilities</span>
+                <span class="num-mono" id="sup-morale-facilities">2.8 / 5.0</span>
+              </div>
+              <div class="meter-bar-track">
+                <div class="meter-bar-fill" style="width: 56%; background: #F59E0B;"></div>
+              </div>
+            </div>
+
+            <div class="sentiment-row">
+              <div class="sentiment-label-row">
+                <span>Equipment & Safety Gear Condition</span>
+                <span class="num-mono" id="sup-morale-equipment">4.6 / 5.0</span>
+              </div>
+              <div class="meter-bar-track">
+                <div class="meter-bar-fill" style="width: 92%; background: #10B981;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="sup-feedback-quotes" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem;">
+            <!-- Seed feedback quotes rendered here -->
+          </div>
+        </div>
+
+        <!-- Overtime & Labor Compliance Audit Trail -->
+        <div class="glass-panel" style="padding: 1.5rem;">
+          <div class="feed-header">
+            <span class="feed-title">
+              <span>📑</span>
+              <span id="txt-sup-audit-title">Overtime & Labor Compliance Ledger</span>
+            </span>
+          </div>
+
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Shift ID</th>
+                  <th>Role</th>
+                  <th>Hours</th>
+                  <th>Overtime</th>
+                  <th>Net Pay</th>
+                </tr>
+              </thead>
+              <tbody id="sup-audit-tbody">
+                <!-- Dynamically populated from shift history -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ====================================================================
+       INTERACTIVE MODALS
+       ==================================================================== -->
+
+  <!-- Modal 1: Report Safety Hazard -->
+  <div class="modal-overlay" id="modal-hazard">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">⚠️ Report Site Safety Hazard</h2>
+        <button class="modal-close-btn" data-close="modal-hazard">&times;</button>
+      </div>
+
+      <form id="form-hazard">
+        <div class="form-group">
+          <label class="form-label" for="hazard-category-select">Hazard Category:</label>
+          <select class="form-select" id="hazard-category-select"></select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="hazard-location-input">Specific Zone / Location:</label>
+          <input type="text" class="form-input" id="hazard-location-input" placeholder="e.g. Pier 114 - West Excavation Frame" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="hazard-desc-input">Hazard Description or Voice Dictation:</label>
+          <div class="textarea-with-mic">
+            <textarea class="form-textarea" id="hazard-desc-input" placeholder="Describe the safety hazard or click Speak to record voice note..."></textarea>
+            <button type="button" class="mic-dictate-btn" id="btn-hazard-dictate">
+              <span>🎤</span> <span>Speak</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Photo Evidence Attachment (Simulated):</label>
+          <div style="padding: 0.6rem; background: var(--bg-glass-input); border: 1px dashed var(--border-glass); border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <span>📷</span> <span>site_camera_frame_timestamped.jpg attached</span>
+          </div>
+        </div>
+
+        <button type="submit" class="modal-submit-btn" id="btn-submit-hazard">Submit Hazard to SLA Queue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Digital Skill Passport -->
+  <div class="modal-overlay" id="modal-passport">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">🪪 Digital Portable Skill Passport</h2>
+        <button class="modal-close-btn" data-close="modal-passport">&times;</button>
+      </div>
+
+      <div class="qr-container">
+        <div class="qr-box" id="passport-qr-code">
+          <!-- Dynamic SVG QR Code -->
+          <svg viewBox="0 0 100 100" fill="#0F172A">
+            <path d="M0,0 h30 v30 h-30 z M5,5 v20 h20 v-20 z M10,10 h10 v10 h-10 z" />
+            <path d="M70,0 h30 v30 h-30 z M75,5 v20 h20 v-20 z M80,10 h10 v10 h-10 z" />
+            <path d="M0,70 h30 v30 h-30 z M5,75 v20 h20 v-20 z M10,80 h10 v10 h-10 z" />
+            <rect x="40" y="10" width="10" height="20" />
+            <rect x="55" y="10" width="10" height="10" />
+            <rect x="40" y="40" width="20" height="20" />
+            <rect x="70" y="40" width="20" height="10" />
+            <rect x="10" y="40" width="20" height="10" />
+            <rect x="40" y="70" width="10" height="20" />
+            <rect x="55" y="80" width="20" height="10" />
+            <rect x="80" y="70" width="10" height="20" />
+          </svg>
+        </div>
+        <div style="font-weight: 700; font-size: 1.1rem;" id="passport-worker-name">Rajesh Kumar</div>
+        <div style="font-size: 0.8rem; color: var(--text-secondary);" id="passport-id-badge">ID: FS-IND-99420 • Verified Frontier Worker</div>
+      </div>
+
+      <div class="pay-grid" style="margin-bottom: 1rem;">
+        <div class="pay-item">
+          <div class="pay-item-label">Verified Site Hours</div>
+          <div class="pay-item-val num-mono" id="passport-total-hours">1,428 hrs</div>
+        </div>
+        <div class="pay-item">
+          <div class="pay-item-label">Safety Compliance Score</div>
+          <div class="pay-item-val num-mono" style="color: #34D399;">99.4%</div>
+        </div>
+      </div>
+
+      <label class="form-label">Verified Certifications & Endorsements:</label>
+      <div class="passport-cred-badges" id="passport-certs-container">
+        <span class="cred-badge">✓ OSHA 30-Hour Construction Safety</span>
+        <span class="cred-badge">✓ NSC Fall Protection Specialist</span>
+        <span class="cred-badge">✓ First-Aid Level 2 Responder</span>
+        <span class="cred-badge">✓ 4× Peer Safety Co-Sign Endorsement</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Anonymous Blind-Token Feedback -->
+  <div class="modal-overlay" id="modal-feedback">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">🔒 Anonymous Feedback (Blind Token)</h2>
+        <button class="modal-close-btn" data-close="modal-feedback">&times;</button>
+      </div>
+
+      <div style="padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.8rem; color: #34D399;">
+        🛡️ <strong>Zero Retaliation Guarantee:</strong> Submissions are cryptographically stripped of phone numbers, emails, and device IDs. Employers only see the aggregated sentiment rating.
+      </div>
+
+      <form id="form-feedback">
+        <div class="form-group">
+          <label class="form-label" for="feedback-category-select">Feedback Category:</label>
+          <select class="form-select" id="feedback-category-select">
+            <option value="facilities">Rest & Hydration Facilities</option>
+            <option value="management">Supervisory Respect & Communication</option>
+            <option value="equipment">Safety Gear & Tool Quality</option>
+            <option value="general">Work Environment & Shift Fairness</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="feedback-rating-select">Satisfaction Score (1 to 5):</label>
+          <select class="form-select" id="feedback-rating-select">
+            <option value="5">⭐⭐⭐⭐⭐ Excellent (5/5)</option>
+            <option value="4" selected>⭐⭐⭐⭐ Good (4/5)</option>
+            <option value="3">⭐⭐⭐ Neutral (3/5)</option>
+            <option value="2">⭐⭐ Needs Improvement (2/5)</option>
+            <option value="1">⭐ Critical Issue (1/5)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="feedback-comment-input">Comments (Phone/Email auto-redacted):</label>
+          <div class="textarea-with-mic">
+            <textarea class="form-textarea" id="feedback-comment-input" placeholder="Enter comments here... Any phone numbers or emails will be automatically stripped before submission."></textarea>
+            <button type="button" class="mic-dictate-btn" id="btn-feedback-dictate">
+              <span>🎤</span> <span>Speak</span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="modal-submit-btn" id="btn-submit-feedback">Submit Anonymous Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Offline Store-and-Forward Queue Inspector -->
+  <div class="modal-overlay" id="modal-offline-queue">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">📴 Offline Store-and-Forward Queue</h2>
+        <button class="modal-close-btn" data-close="modal-offline-queue">&times;</button>
+      </div>
+
+      <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        When cellular reception drops in basements or remote excavation sites, actions are cryptographically nonced and buffered in IndexedDB/Local storage, flushing automatically upon reconnection.
+      </div>
+
+      <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;" id="queue-status-heading">Queued Pending Actions:</div>
+      <div id="queue-pending-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 160px; overflow-y: auto; margin-bottom: 1rem;">
+        <!-- Pending items -->
+      </div>
+
+      <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;">Recent Cloud Reconnection Sync Audit:</div>
+      <div id="queue-sync-history-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 160px; overflow-y: auto;">
+        <!-- Sync history -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core Javascript Modules (Zero external dependencies) -->
+  <script src="js/utils.js"></script>
+  <script src="js/industries.js"></script>
+  <script src="js/shift-tracker.js"></script>
+  <script src="js/safety.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/passport.js"></script>
+  <script src="js/attrition.js"></script>
+  <script src="js/climate-guard.js"></script>
+  <script src="js/offline-queue.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

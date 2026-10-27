@@ -249,8 +249,8 @@ class SafetyManager {
     let updated = false;
     this.reports.forEach(r => {
       if (r.status !== 'Resolved & Safe' && r.slaMinutesRemaining > 0) {
-        // decrement slightly for visual realism in demo
-        r.slaMinutesRemaining = Math.max(0, r.slaMinutesRemaining - 0.05);
+        // decrement slightly for visual realism in demo, keeping 1 decimal place max
+        r.slaMinutesRemaining = Math.max(0, Math.round((r.slaMinutesRemaining - 0.05) * 10) / 10);
         updated = true;
       }
     });
@@ -260,6 +260,10 @@ class SafetyManager {
   }
 }
 
+const globalScopeSafety = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeSafety.SafetyManager = SafetyManager;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { SafetyManager };
 }
+

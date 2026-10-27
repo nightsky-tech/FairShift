@@ -17,7 +17,7 @@ class OfflineQueueManager {
   }
 
   initNetworkListeners() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
       window.addEventListener('online', () => this.handleNetworkRestore());
       window.addEventListener('offline', () => this.handleNetworkDrop());
     }
@@ -165,6 +165,10 @@ class OfflineQueueManager {
   }
 }
 
+const globalScopeQueue = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeQueue.OfflineQueueManager = OfflineQueueManager;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { OfflineQueueManager };
 }
+

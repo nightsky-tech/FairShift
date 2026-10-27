@@ -5,12 +5,18 @@
  */
 
 (function (root, factory) {
+  const result = factory();
+  if (typeof window !== 'undefined') {
+    window.FairShiftUtils = result;
+  }
+  if (typeof global !== 'undefined') {
+    global.FairShiftUtils = result;
+  }
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof module === 'object' && module.exports) {
-    module.exports = factory();
-  } else {
-    root.FairShiftUtils = factory();
+    define([], () => result);
+  }
+  if (typeof module === 'object' && module.exports) {
+    module.exports = result;
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';

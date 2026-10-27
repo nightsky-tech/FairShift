@@ -157,6 +157,10 @@ class AttritionPredictor {
   }
 }
 
+const globalScopeAttrition = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeAttrition.AttritionPredictor = AttritionPredictor;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { AttritionPredictor };
 }
+

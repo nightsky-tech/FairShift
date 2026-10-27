@@ -246,6 +246,10 @@ class FeedbackManager {
   }
 }
 
+const globalScopeFb = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeFb.FeedbackManager = FeedbackManager;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { FeedbackManager };
 }
+

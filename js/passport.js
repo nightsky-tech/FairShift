@@ -128,6 +128,11 @@ class SkillPassportManager {
   }
 }
 
+const globalScopePassport = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopePassport.SkillPassportManager = SkillPassportManager;
+globalScopePassport.SkillPassport = SkillPassportManager;
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { SkillPassportManager };
+  module.exports = { SkillPassportManager, SkillPassport: SkillPassportManager };
 }
+

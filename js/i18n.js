@@ -773,6 +773,37 @@ class SpeechEngine {
   }
 }
 
+// Unified I18N & Speech Engine Singleton
+const I18N_ENGINE = {
+  speechEngine: new SpeechEngine(),
+  t(key, lang = 'en') {
+    const dict = TRANSLATIONS[lang] || TRANSLATIONS.en || {};
+    return dict[key] || (TRANSLATIONS.en && TRANSLATIONS.en[key]) || key;
+  },
+  speak(text, lang = 'en', onEnd) {
+    if (this.speechEngine) {
+      this.speechEngine.setLanguage(lang);
+      this.speechEngine.speak(text, onEnd);
+    }
+  },
+  startListening(lang = 'en', onResult, onEnd) {
+    if (this.speechEngine) {
+      this.speechEngine.setLanguage(lang);
+      this.speechEngine.startListening(onResult, null, onEnd);
+    }
+  },
+  playChime(type = 'success') {
+    if (this.speechEngine) this.speechEngine.playChime(type);
+  }
+};
+
+const globalScopeI18n = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeI18n.I18N_LANGUAGES = I18N_LANGUAGES;
+globalScopeI18n.TRANSLATIONS = TRANSLATIONS;
+globalScopeI18n.SpeechEngine = SpeechEngine;
+globalScopeI18n.I18N_ENGINE = I18N_ENGINE;
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { I18N_LANGUAGES, TRANSLATIONS, SpeechEngine };
+  module.exports = { I18N_LANGUAGES, TRANSLATIONS, SpeechEngine, I18N_ENGINE };
 }
+

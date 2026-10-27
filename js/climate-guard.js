@@ -108,6 +108,11 @@ class ClimateGuard {
   }
 }
 
+const globalScopeClimate = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this);
+globalScopeClimate.ClimateGuard = ClimateGuard;
+globalScopeClimate.HEAT_ALERTS_I18N = HEAT_ALERTS_I18N;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { ClimateGuard, HEAT_ALERTS_I18N };
 }
+
