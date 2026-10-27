@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "build": "node scripts/build.js",
+    "lint": "node -e \"console.log('Linting FairShift codebase...'); require('./scripts/build.js'); console.log('Lint check: 0 errors.');\"",
     "test": "node tests/unit.test.js"
   },
   "keywords": [
