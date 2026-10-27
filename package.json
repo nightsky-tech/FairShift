@@ -2,12 +2,10 @@
   "name": "fairshift-sdg8",
   "version": "1.0.0",
   "description": "FairShift - Fair, Safe & Transparent Workforce Management Platform for SDG 8 (Decent Work & Economic Growth)",
-  "main": "server.js",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "echo 'Static assets ready'",
     "test": "node tests/unit.test.js"
   },
   "keywords": [
