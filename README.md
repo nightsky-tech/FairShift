@@ -107,6 +107,33 @@ gcloud run deploy fairshift \
 
 ---
 
+## ⚡ Vercel Deployment
+
+FairShift is fully configured for zero-config global deployment on **Vercel**:
+* Configuration file: [vercel.json](file:///c:/Users/admin/Downloads/promtwars/vercel.json)
+* Serverless health check: [api/health.js](file:///c:/Users/admin/Downloads/promtwars/api/health.js) (`/health` and `/_health` rewrites)
+* Security headers pre-configured (OWASP defense-in-depth)
+
+### Deploy via Vercel CLI:
+```bash
+# 1. Deploy preview
+npx vercel
+
+# 2. Deploy to production
+npx vercel --prod
+```
+
+### Deploy via Git (GitHub / GitLab):
+1. Push repository to your GitHub account:
+   ```bash
+   git remote add origin https://github.com/[YOUR-USERNAME]/fairshift.git
+   git branch -M main
+   git push -u origin main
+   ```
+2. Go to [vercel.com/new](https://vercel.com/new) and import the repository.
+3. Click **Deploy**. Vercel detects `vercel.json` and static assets automatically.
+
+
 ## 📱 LinkedIn Post Story (Ready to Share)
 
 ```markdown
