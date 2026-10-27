@@ -26,6 +26,35 @@ const MIME_TYPES = {
   '.txt': 'text/plain; charset=utf-8'
 };
 
+// In-memory cache and static trace anchor for Vercel Serverless / Cloud Run
+let cachedIndexHtml = null;
+try {
+  cachedIndexHtml = fs.readFileSync(path.join(__dirname, 'index.html'));
+} catch (e1) {
+  try {
+    cachedIndexHtml = fs.readFileSync(path.join(process.cwd(), 'index.html'));
+  } catch (e2) {}
+}
+
+function findFilePath(relPath) {
+  const clean = relPath.replace(/^[\/\\]+/, '');
+  const searchRoots = [
+    __dirname,
+    process.cwd(),
+    path.join(__dirname, '..'),
+    path.join(process.cwd(), '..')
+  ];
+  for (const r of searchRoots) {
+    const candidate = path.resolve(r, clean);
+    try {
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        return candidate;
+      }
+    } catch (_) {}
+  }
+  return null;
+}
+
 const server = http.createServer((req, res) => {
   // Security Headers (OWASP recommended defense-in-depth)
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,7 +86,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Cloud Run Health Check Endpoint
+  // Health Check Endpoint
   if (pathname === '/health' || pathname === '/_health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -66,6 +95,7 @@ const server = http.createServer((req, res) => {
       version: '1.0.0',
       sdgTarget: 'SDG 8: Decent Work & Economic Growth',
       cloudRunReady: true,
+      deployedOn: 'Vercel / Cloud Run',
       timestamp: new Date().toISOString()
     }));
     return;
@@ -78,59 +108,73 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Normalize path & default to index.html
-  if (pathname === '/' || pathname === '') {
-    pathname = '/index.html';
-  }
+  // Route HTML / root requests
+  const isHtmlRoute = (
+    pathname === '/' ||
+    pathname === '' ||
+    pathname === '/index.html' ||
+    pathname === '/index' ||
+    !path.extname(pathname)
+  );
 
-  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
-  const rootDir = path.resolve(__dirname);
-  const filePath = path.resolve(rootDir, '.' + safePath);
-
-  // Security: canonical path check ensuring file stays strictly inside rootDir
-  if (!filePath.startsWith(rootDir)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-    res.end('403 Forbidden');
-    return;
-  }
-
-  fs.stat(filePath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      if (!path.extname(pathname)) {
-        const indexPath = path.join(__dirname, 'index.html');
-        fs.readFile(indexPath, (readErr, content) => {
-          if (readErr) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('404 Not Found');
-          } else {
-            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(content);
-          }
+  if (isHtmlRoute) {
+    const indexPath = findFilePath('index.html');
+    if (indexPath) {
+      try {
+        const content = fs.readFileSync(indexPath);
+        res.writeHead(200, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache'
         });
+        res.end(content);
         return;
-      }
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end(`404 Not Found: ${pathname}`);
-      return;
+      } catch (_) {}
     }
 
-    const ext = path.extname(filePath).toLowerCase();
+    if (cachedIndexHtml) {
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache'
+      });
+      res.end(cachedIndexHtml);
+      return;
+    }
+  }
+
+  // Route static assets (CSS, JS, images, fonts)
+  const cleanPath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+  const existingFile = findFilePath(cleanPath);
+
+  if (existingFile) {
+    const ext = path.extname(existingFile).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-
-    fs.readFile(filePath, (readErr, content) => {
-      if (readErr) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('500 Internal Server Error');
-        return;
-      }
-
+    try {
+      const content = fs.readFileSync(existingFile);
       res.writeHead(200, {
         'Content-Type': contentType,
         'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
       });
       res.end(content);
+      return;
+    } catch (_) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('500 Internal Server Error');
+      return;
+    }
+  }
+
+  // SPA fallback for unmapped client paths
+  if (cachedIndexHtml) {
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache'
     });
-  });
+    res.end(cachedIndexHtml);
+    return;
+  }
+
+  res.writeHead(404, { 'Content-Type': 'text/plain' });
+  res.end(`404 Not Found: ${pathname}`);
 });
 
 if (require.main === module) {
